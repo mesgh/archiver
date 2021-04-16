@@ -1,0 +1,45 @@
+html {
+  box-sizing: border-box;
+  zoom: 200%;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: #4d6629;
+}
+.container {
+  margin: 20px auto;
+  max-width: 300px;
+  text-align: center;
+}
+.btn {
+  background-color: #4d6629;
+  color: #e3e3e3;
+  font-weight: bold;
+  font-size: inherit;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-label {
+  font-size: 12px;
+}
+.btn:hover,
+.link:hover {
+  opacity: 0.8;
+}
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+input[type=file] {
+  display: none;
+}
