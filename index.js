@@ -3,16 +3,14 @@ const request = require('request');
 const { pipeline, Transform } = require('stream');
 const url = require('url');
 const zlib = require('zlib');
-const fs = require('fs');
 const app = express();
 
 app
-  .use('/', express.static('./files'))
-
+  .use('/', express.static('pages/main'))
+  .use('/chat', express.static('pages/chat'))
   .post('/zip', (req, res) => {
     req.pipe(zlib.createGzip()).pipe(res);
   })
-
   .post('/transform', (req, res) => {
     class Trf extends Transform {
       _transform(chunk, encoding, callback) {
@@ -23,7 +21,6 @@ app
     const plus_one = new Trf();
     pipeline(req, plus_one, res, () => console.log('done'));
   })
-  
   .get('/pipe', (req, res) => {
     request(url.format({
       protocol: 'https',
@@ -32,7 +29,6 @@ app
     }))
       .pipe(res)
     })
-    
     .use((req, res) => {
       res
       .status(404)
@@ -41,6 +37,5 @@ app
       })
       .send('<h1 style="aqua">Не найдено!</h1>');
     })
-    
     .listen(process.env.PORT || 80);
     

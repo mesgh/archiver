@@ -1,5 +1,5 @@
 {
-  "name": "fast",
+  "name": "archiver",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mesgh/fast.git"
+    "url": "git+https://github.com/mesgh/archiver.git"
   },
   "bugs": {
-    "url": "https://github.com/mesgh/fast/issues"
+    "url": "https://github.com/mesgh/archiver/issues"
   },
-  "homepage": "https://github.com/mesgh/fast#readme",
+  "homepage": "https://github.com/mesgh/archiver#readme",
   "description": ""
 }
