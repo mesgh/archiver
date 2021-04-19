@@ -1,8 +1,11 @@
+const { Server: http } = require('http');
 const express = require('express');
 const request = require('request');
 const { pipeline, Transform } = require('stream');
 const url = require('url');
 const zlib = require('zlib');
+const socketIO = require('socket.io');
+const PORT = 80;
 const app = express();
 
 app
@@ -14,7 +17,7 @@ app
   .post('/transform', (req, res) => {
     class Trf extends Transform {
       _transform(chunk, encoding, callback) {
-        this.push(chunk.toString().split('').map( char => parseInt(char) + 1).join(''));
+        this.push(chunk.toString().split('').map(char => parseInt(char) + 1).join(''));
         callback();
       }
     }
@@ -28,14 +31,28 @@ app
       pathname: '/g/forpipe'
     }))
       .pipe(res)
-    })
-    .use((req, res) => {
-      res
+  })
+  .use((req, res) => {
+    res
       .status(404)
       .set({
         'Content-Type': 'text/html; charset=utf-8'
       })
       .send('<h1 style="aqua">Не найдено!</h1>');
-    })
-    .listen(process.env.PORT || 80);
-    
+  });
+
+const server = http(app).listen(process.env.PORT || PORT, () => console.log(process.pid));
+const io = socketIO(server);
+const callback = data => console.log(data);
+
+io.on('connection', ws => {
+  let user;
+  ws.on('user data', data => {
+    user = data;
+    console.log(`Новый пользователь - ${user.name}!`);
+    ws.broadcast.emit('server', `Пользователь ${user.name} присоединился!`);
+  });
+  ws.on('disconnect', () => console.log('Пользователь отвалился!'));
+  ws.on('close', () => console.log(`Пользователь ${user.name} покинул чат!`));
+});
+

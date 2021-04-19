@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "request": "^2.88.2",
+    "socket.io": "^4.0.1",
     "url": "^0.11.0"
   },
   "devDependencies": {
@@ -23,6 +24,5 @@
   "bugs": {
     "url": "https://github.com/mesgh/archiver/issues"
   },
-  "homepage": "https://github.com/mesgh/archiver#readme",
-  "description": ""
+  "homepage": "https://github.com/mesgh/archiver#readme"
 }
