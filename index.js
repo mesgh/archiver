@@ -67,7 +67,7 @@ io.on('connection', ws => {
   ws.on('typing', () => {
     if (!typing) {
       typing = true;
-      ws.emit('typing', {
+      ws.broadcast.emit('typing', {
         sender: user,
         body: `Пользователь ${user.name} печатает ...`
       });
@@ -76,10 +76,6 @@ io.on('connection', ws => {
       }, 500);
     }
   });
-  ws.on('disconnect', () => io.emit('server', {
-    sender: 'server',
-    body: `Пользователь ${user?.name || ''} отвалился!`
-  }));
   ws.on('close', () => io.emit('server', {
     sender: 'server',
     body: `Пользователь ${user?.name || ''} покинул чат!`

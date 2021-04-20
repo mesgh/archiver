@@ -13,23 +13,29 @@ const sending_msg = chat.querySelector('.sending__msg');
 const sending_btn = chat.querySelector('.sending__btn');
 const user = {};
 const ws = io();
-let typing = new Map();
+const typing = {};
 ws.on('server', msg => {
   msg = createMsg(msg);
   chat_body.append(msg);
   msg.scrollIntoView();
 });
 ws.on('typing', msg => {
-  msg = createMsg(msg);
-  chat_body.append(msg);
-  msg.scrollIntoView();
-  typing.set(
-    msg.sender.name, 
-    window.setTimeout(() => {
-      chat_body.removeChild(msg);
-    }, 1000)
-  );
-  
+  const name = msg.sender.name;
+  if (typing[name]) {
+    clearTimeout(typing[name].timer);
+    typing[name].timer = window.setTimeout(() => {
+      chat_body.removeChild(typing[name].elem);
+      delete typing[name];
+    }, 1000);
+  } else {
+    typing[name] = { elem: createMsg(msg) };
+    typing[name].timer = window.setTimeout(() => {
+      chat_body.removeChild(typing[name].elem);
+      delete typing[name];
+    }, 1000);
+    chat_body.append(typing[name].elem);
+    typing[name].elem.scrollIntoView();
+  }
 });
 
 start_btn.addEventListener('click', e => {
@@ -72,10 +78,8 @@ sending_btn.addEventListener('click', e => {
 });
 
 sending_msg.addEventListener('input', e => {
-    ws.emit('typing');
+  ws.emit('typing');
 });
-
-messaging_icon
 
 function createMsg(msg) {
   const wrap = document.createElement('div');
@@ -92,8 +96,11 @@ function createMsg(msg) {
     const icon = document.createElement('div');
     icon.textContent = msg.sender.liter;
     icon.classList.add('message__icon');
-    icon.style.backgroundColor =  msg.sender.color;
-    icon.dataset.name = msg.sender.name;
+    icon.style.backgroundColor = msg.sender.color;
+    icon.addEventListener('click', () => {
+      icon.textContent = msg.sender.name;
+      icon.style.width = 'auto';
+    });
 
     if (msg.sender.name === user.name) {
       wrap.classList.add('message--mine');
