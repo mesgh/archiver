@@ -12,7 +12,25 @@ const chat_foot = chat.querySelector('.chat__foot');
 const sending_msg = chat.querySelector('.sending__msg');
 const sending_btn = chat.querySelector('.sending__btn');
 const user = {};
-let ws;
+const ws = io();
+let typing = new Map();
+ws.on('server', msg => {
+  msg = createMsg(msg);
+  chat_body.append(msg);
+  msg.scrollIntoView();
+});
+ws.on('typing', msg => {
+  msg = createMsg(msg);
+  chat_body.append(msg);
+  msg.scrollIntoView();
+  typing.set(
+    msg.sender.name, 
+    window.setTimeout(() => {
+      chat_body.removeChild(msg);
+    }, 1000)
+  );
+  
+});
 
 start_btn.addEventListener('click', e => {
   e.preventDefault();
@@ -22,9 +40,7 @@ start_btn.addEventListener('click', e => {
     user.name = start_name.value;
     user.liter = user.name[0].toUpperCase();
     user.color = start_color.value;
-    ws = io();
     ws.emit('user data', user);
-    ws.on('server', element => console.log(element));
 
     messaging_icon.textContent = user.liter;
     messaging_icon.style.backgroundColor = user.color;
@@ -45,14 +61,47 @@ messaging_exit.addEventListener('click', e => {
   ws.emit('close');
 });
 
-function msg(sender, message) {
-  const div = document.createElement('div');
-  const cont = div;
-  cont.classList.add('message');
-  const body = div
+sending_btn.addEventListener('click', e => {
+  e.preventDefault();
+  if (sending_msg.value === '') {
+    sending_msg.focus();
+  } else {
+    ws.emit('message', sending_msg.value);
+    sending_msg.value = '';
+  }
+});
+
+sending_msg.addEventListener('input', e => {
+    ws.emit('typing');
+});
+
+messaging_icon
+
+function createMsg(msg) {
+  const wrap = document.createElement('div');
+  wrap.classList.add('message');
+  const body = document.createElement('div');
   body.classList.add('message__body');
-  body.textContent = message;
-  cont.append(body);
-  
-  return cont;
+  body.textContent = msg.body;
+
+  wrap.append(body);
+
+  if (msg.sender === 'server') {
+    wrap.classList.add('message--server');
+  } else {
+    const icon = document.createElement('div');
+    icon.textContent = msg.sender.liter;
+    icon.classList.add('message__icon');
+    icon.style.backgroundColor =  msg.sender.color;
+    icon.dataset.name = msg.sender.name;
+
+    if (msg.sender.name === user.name) {
+      wrap.classList.add('message--mine');
+      wrap.insertBefore(icon, body);
+    } else {
+      wrap.append(icon);
+    }
+  }
+
+  return wrap;
 }

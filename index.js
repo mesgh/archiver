@@ -43,16 +43,46 @@ app
 
 const server = http(app).listen(process.env.PORT || PORT, () => console.log(process.pid));
 const io = socketIO(server);
-const callback = data => console.log(data);
 
 io.on('connection', ws => {
-  let user;
+  let user = {
+    name: 'Anonim',
+    liter: 'A',
+    color: '#ac7'
+  };
+  let typing = false;
   ws.on('user data', data => {
     user = data;
-    console.log(`Новый пользователь - ${user.name}!`);
-    ws.broadcast.emit('server', `Пользователь ${user.name} присоединился!`);
+    io.emit('server', {
+      sender: 'server',
+      body: `Пользователь ${user.name} присоединился!`
+    });
   });
-  ws.on('disconnect', () => console.log('Пользователь отвалился!'));
-  ws.on('close', () => console.log(`Пользователь ${user.name} покинул чат!`));
+  ws.on('message', message => {
+    io.emit('server', {
+      sender: user,
+      body: message
+    });
+  });
+  ws.on('typing', () => {
+    if (!typing) {
+      typing = true;
+      ws.emit('typing', {
+        sender: user,
+        body: `Пользователь ${user.name} печатает ...`
+      });
+      setTimeout(() => {
+        typing = false;
+      }, 500);
+    }
+  });
+  ws.on('disconnect', () => io.emit('server', {
+    sender: 'server',
+    body: `Пользователь ${user?.name || ''} отвалился!`
+  }));
+  ws.on('close', () => io.emit('server', {
+    sender: 'server',
+    body: `Пользователь ${user?.name || ''} покинул чат!`
+  }));
 });
 

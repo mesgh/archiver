@@ -82,14 +82,15 @@ button:focus {
   background-color: #dedede;
 }
 .chat__body {
-  height: inherit;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
   position: relative;
+  padding: 55px 0 45px 0;
+  overflow-y: scroll;
   background-color: #0e1621;
-  padding: 40px 0 45px 0;
 }
 ::-webkit-scrollbar {
   width: 0;
@@ -106,6 +107,7 @@ button:focus {
   flex-shrink: 0;
   border-radius: 50%;
   background-color: #dedede;
+  cursor: pointer;
 }
 .message__body {
   margin: 5px;
@@ -129,6 +131,7 @@ button:focus {
 }
 .chat__foot {
   width: 100%;
+  max-width: 1350px;
   padding: 10px;
   position: fixed;
   bottom: -45px;
