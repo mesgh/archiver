@@ -30,7 +30,7 @@ body {
   transition: all 0.2s;
 }
 .btn:disabled {
-  background-image: url('loading.gif');
+  background-image: url('Loading.gif');
   background-repeat: no-repeat;
   background-size: 30px 30px;
   background-position: 50% 50%;
