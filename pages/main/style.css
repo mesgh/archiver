@@ -1,6 +1,6 @@
 html {
   box-sizing: border-box;
-  zoom: 200%;
+  zoom: 150%;
 }
 *,
 *::before,
@@ -28,6 +28,13 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s;
+}
+.btn:disabled {
+  background-image: url('loading.gif');
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+  background-position: 50% 50%;
+  color: transparent;
 }
 .btn-label {
   font-size: 12px;

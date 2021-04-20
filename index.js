@@ -11,6 +11,7 @@ const app = express();
 app
   .use('/', express.static('pages/main'))
   .use('/chat', express.static('pages/chat'))
+  .use('/api', require('./api')(express))
   .post('/zip', (req, res) => {
     req.pipe(zlib.createGzip()).pipe(res);
   })
